@@ -14,7 +14,10 @@
 //
 #include "IGESControl_Reader.hxx"
 #include "TColStd_HSequenceOfTransient.hxx"
+#include "TopoDS_Edge.hxx"
+#include "TopoDS_Face.hxx"
 #include "TopoDS_Shape.hxx"
+#include "TopoDS_Vertex.hxx"
 
 #include "Teuchos_RCP.hpp"
 
@@ -26,23 +29,44 @@ tadiga::IgesGeometry::IgesGeometry(
     : kComm_(kComm) {
     const auto kFileName = kGeometryParameters->get<std::string>("File Name");
 
-    // Open IGES Reader from OpenCASCADE
     const auto kIgesReader = Teuchos::rcp(new IGESControl_Reader);
     const auto status = kIgesReader->ReadFile(kFileName.c_str());
 
     // TODO(johntfoster@gmail.com): Check the status of the file
-
-    Handle(TColStd_HSequenceOfTransient) myList =
-        kIgesReader->GiveList("iges-faces");
     // selects all IGES faces in the file and puts them into a list  called
-    // //MyList,
+    // MyList; Returns list of entities from IGES file
 
-    const auto kIgesFaces = myList->Length();
-    const auto kTransFaces = kIgesReader->TransferList(myList);
-    // translates MyList,
+    Handle(TColStd_HSequenceOfTransient) myFaceList =
+        kIgesReader->GiveList("iges-faces");
+    Handle(TColStd_HSequenceOfTransient) myLineList =
+        kIgesReader->GiveList("iges-type(110)");
+    Handle(TColStd_HSequenceOfTransient) myTabulatedCylinderList =
+        kIgesReader->GiveList("iges-type(122)");
+    Handle(TColStd_HSequenceOfTransient) myCompositeCurveList =
+        kIgesReader->GiveList("iges-type(102)");
+    Handle(TColStd_HSequenceOfTransient) myCurveOnSurfaceList =
+        kIgesReader->GiveList("iges-type(142)");
+    Handle(TColStd_HSequenceOfTransient) myBSplineCurveList =
+        kIgesReader->GiveList("iges-type(126)");
 
-    std::cout << "IGES Faces: " << kIgesFaces
-              << "   Transferred:" << kTransFaces << std::endl;
+    this->SetNumberIgesFaces(myFaceList->Length());
+    this->SetNumberFaces(kIgesReader->TransferList(myFaceList));
 
-    TopoDS_Shape sh = kIgesReader->OneShape();
+    this->SetNumberIgesLines(myLineList->Length());
+    this->SetNumberLines(kIgesReader->TransferList(myLineList));
+
+    this->SetNumberIgesTabCylinders(myTabulatedCylinderList->Length());
+    this->SetNumberTabulatedCylinders(
+        kIgesReader->TransferList(myTabulatedCylinderList));
+
+    this->SetNumberIgesCompCurves(myCompositeCurveList->Length());
+    this->SetNumberCompositeCurves(
+        kIgesReader->TransferList(myCompositeCurveList));
+
+    this->SetNumberIgesCurveOnSurface(myCurveOnSurfaceList->Length());
+    this->SetNumberCurveOnSurface(
+        kIgesReader->TransferList(myCurveOnSurfaceList));
+
+    TopoDS_Shape transfered_OCCT_shape = kIgesReader->OneShape();
+    // Obtains the results in a single OCCT shape
 };
