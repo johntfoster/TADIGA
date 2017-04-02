@@ -11,6 +11,7 @@ option(COVERALLS "Turn on coveralls support" OFF)
 option(COVERALLS_UPLOAD "Upload the generated coveralls json" ON)
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMakeModules/coveralls-cmake/cmake" ${CMAKE_MODULE_PATH})
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMakeModules/open-cascade" ${CMAKE_MODULE_PATH})
 
 
 
@@ -24,6 +25,9 @@ mark_as_advanced (CLEAR CMAKE_CXX_FLAGS)
 if (NOT CMAKE_CXX_FLAGS)
   set (CMAKE_CXX_FLAGS "-DMPICH_IGNORE_CXX_SEEK" CACHE STRING "Flags used by the compiler during all build types." FORCE)
 endif (NOT CMAKE_CXX_FLAGS)
+
+
+find_package(opencascade REQUIRED)
 
 
 
@@ -75,6 +79,7 @@ include(CMakePackageConfigHelpers)
 # include for all directories
 # Collection of include and lib directories
 set(INCLUDE_DIRS 
+${OCC_INCLUDE_DIR}
 ${Trilinos_INCLUDE_DIRS} 
 ${Trilinos_TPL_INCLUDE_DIRS}
 ${CMAKE_SOURCE_DIR}

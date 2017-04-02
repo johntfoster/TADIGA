@@ -40,6 +40,6 @@ class IgesGeometry : public tadiga::Geometry {
     //  Communicator
     const Teuchos::RCP<const Teuchos::Comm<int>>& kComm_;
 };
-}
+};
 
 #endif  // TADIGA_IGES_GEOMETRY_H

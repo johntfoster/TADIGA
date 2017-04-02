@@ -18,12 +18,15 @@ set(Tadiga_SOURCES
     ${PROJECT_SOURCE_DIR}/src/tadiga_parser.cc
     ${PROJECT_SOURCE_DIR}/src/tadiga_geometry.cc
     ${PROJECT_SOURCE_DIR}/src/tadiga_geometry_factory.cc
+    ${PROJECT_SOURCE_DIR}/src/tadiga_geometry.cc
+
 )
 
 add_library(tadigaLib ${Tadiga_SOURCES})
 set(Tadiga_LIBRARY tadigaLib)
 
 set(Tadiga_LINK_LIBRARIES
+    ${OCC_LIBRARIES}
     ${Tadiga_LIBRARY}
     ${Trilinos_LIBRARIES}
     ${REQUIRED_LIBS}
