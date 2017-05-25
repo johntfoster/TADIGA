@@ -45,8 +45,8 @@ void tadiga::Geometry::initialize() {
 
     // Look for ToopDS_Edges in  nurbs_converted_shape_
     auto shape_explorer = TopExp_Explorer(nurbs_converted_shape_, TopAbs_EDGE);
-    for (auto const& shape = shape_explorer.Current(); shape_explorer.More();
-         shape_explorer.Next()) {
+    for (auto const &shape = shape_explorer.Current(); shape_explorer.More();
+         shape_explorer.Next(), edge_counter++) {
         const auto extracted_edge = TopoDS::Edge(shape);
 
         const auto brep_adaptor_curve =
@@ -65,21 +65,22 @@ void tadiga::Geometry::initialize() {
         // Print  knot vector to integer array
         std::cout << "Edge #" << edge_counter << " Knot Sequence:";
 
-        for (tadiga::types::TadigaUnsignedInt i = 1; i < length_; i += 1) {
-            std::cout << " " << knot_sequence.Value(i);
-            knot_sequence_[i - 1] = knot_sequence.Value(i);
+        for (tadiga::types::TadigaUnsignedInt i = 0; i < length_; ++i) {
+            std::cout << " " << knot_sequence.Value(i + 1);
+            knot_sequence_.push_back(knot_sequence.Value(i + 1));
         }
         std::cout << endl;
-        edge_counter++;
     }
 
     // Look for TopoDS_Faces in nurbs_converted_shape
     tadiga::types::TadigaUnsignedInt face_counter = 1;
 
-    for (shape_explorer.Init(nurbs_converted_shape_, TopAbs_FACE);
-         shape_explorer.More(); shape_explorer.Next()) {
-        const TopoDS_Face& extracted_face =
-            TopoDS::Face(shape_explorer.Current());
+    // Reset explorer on face now
+    shape_explorer.Init(nurbs_converted_shape_, TopAbs_FACE);
+
+    for (auto const &shape = shape_explorer.Current(); shape_explorer.More();
+         shape_explorer.Next(), face_counter++) {
+        const auto extracted_face = TopoDS::Face(shape);
 
         const auto brep_adaptor_surface =
             Teuchos::rcp(new BRepAdaptor_Surface(extracted_face));
@@ -93,9 +94,9 @@ void tadiga::Geometry::initialize() {
         std::cout << "U Length: " << u_length_ << endl;
         std::cout << "Face #" << face_counter << " U Knot Sequence:";
 
-        for (int i = 1; i <= u_length_; i = i + 1) {
-            std::cout << " " << u_knot_sequence.Value(i);
-            u_knot_sequence_[i - 1] = u_knot_sequence.Value(i);
+        for (tadiga::types::TadigaUnsignedInt i = 0; i < u_length_; ++i) {
+            std::cout << " " << u_knot_sequence.Value(i + 1);
+            u_knot_sequence_.push_back(u_knot_sequence.Value(i + 1));
         }
         std::cout << endl;
 
@@ -106,11 +107,10 @@ void tadiga::Geometry::initialize() {
         std::cout << "V Length: " << v_length_ << endl;
         std::cout << "Face #" << face_counter << " V Knot Sequence:";
 
-        for (int i = 1; i <= v_length_; i = i + 1) {
-            std::cout << " " << v_knot_sequence.Value(i);
-            v_knot_sequence_[i - 1] = v_knot_sequence.Value(i);
+        for (tadiga::types::TadigaUnsignedInt i = 0; i < v_length_; ++i) {
+            std::cout << " " << v_knot_sequence.Value(i + 1);
+            v_knot_sequence_.push_back(v_knot_sequence.Value(i + 1));
         }
         std::cout << endl;
-        face_counter++;
     }
-}
+};

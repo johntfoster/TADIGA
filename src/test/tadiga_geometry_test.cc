@@ -12,18 +12,20 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 //
+#include <array>
 #include <fstream>
 #include <iostream>
 
+#include "Teuchos_RCP.hpp"
 #include "Teuchos_UnitTestHarness.hpp"
+#include "Teuchos_YamlParser_decl.hpp"
 #include "Tpetra_DefaultPlatform.hpp"
 
 #include "IGESControl_Reader.hxx"
 #include "TColStd_HSequenceOfTransient.hxx"
-#include "Teuchos_YamlParser_decl.hpp"
 
-#include "Teuchos_RCP.hpp"
 #include "tadiga_IGES_geometry.h"
+#include "tadiga_types.h"
 
 namespace tadiga_test {
 
@@ -31,12 +33,11 @@ class TestSetup {
    public:
     TestSetup() {}
 
-    ~TestSetup() { fclose(temp_file_); };
+    ~TestSetup(){};
 
-    auto GetYamlFileName() { return std::to_string(fileno(temp_file_)); }
-    auto GetActualKnotSequence() { return actual_knot_sequence_; }
-    auto GetActual_UKnotSequence() { return actual_Uknot_sequence_; }
-    auto GetActual_VKnotSequence() { return actual_Vknot_sequence_; }
+    auto GetKnotSequence() { return knot_sequence_; }
+    auto GetUKnotSequence() { return u_knot_sequence_; }
+    auto GetVKnotSequence() { return v_knot_sequence_; }
 
     auto GetComm() { return kComm_; }
 
@@ -44,11 +45,10 @@ class TestSetup {
     // Get communicator from test runner
     Teuchos::RCP<const Teuchos::Comm<int>> kComm_ =
         Tpetra::DefaultPlatform::getDefaultPlatform().getComm();
-    int actual_knot_sequence_[2] = {0, 1};
-    int actual_Uknot_sequence_[4] = {0, 0, 1, 1};
-    int actual_Vknot_sequence_[4] = {0, 0, 1, 1};
-    // Create temporary file
-    std::FILE* temp_file_ = std::tmpfile();
+
+    tadiga::types::TadigaRealArray<2> knot_sequence_ = {0, 1};
+    tadiga::types::TadigaRealArray<4> u_knot_sequence_ = {0, 0, 1, 1};
+    tadiga::types::TadigaRealArray<4> v_knot_sequence_ = {0, 0, 1, 1};
 };
 
 TEUCHOS_UNIT_TEST(Tadiga_Geometry, curve_knot_sequence_values) {
@@ -57,19 +57,16 @@ TEUCHOS_UNIT_TEST(Tadiga_Geometry, curve_knot_sequence_values) {
     auto parameters = Teuchos::rcp(new Teuchos::ParameterList());
     auto geometry_parameters =
         Teuchos::rcpFromRef(parameters->sublist("Geometry"));
-
     geometry_parameters->set("Type", "IGES");
     geometry_parameters->set("File Name", "test.igs");
+
     tadiga::IgesGeometry iges_geometry_reader(kTestFixture->GetComm(),
                                               geometry_parameters);
-    auto actual_knot_sequence_ = kTestFixture->GetActualKnotSequence();
-    int knot_sequence_length_ = iges_geometry_reader.GetKnotSequenceLength();
-    int i;
-    for (i = 1; i <= knot_sequence_length_; i = i + 1) {
-        TEST_EQUALITY(iges_geometry_reader.GetKnotSequence()[i - 1],
-                      actual_knot_sequence_[i - 1]);
-    }
+
+    TEST_COMPARE_ARRAYS(iges_geometry_reader.GetKnotSequence(),
+                        kTestFixture->GetKnotSequence());
 };
+
 TEUCHOS_UNIT_TEST(Tadiga_Geometry, face_Uknot_sequence_values) {
     const auto kTestFixture = Teuchos::rcp(new TestSetup());
 
@@ -81,13 +78,9 @@ TEUCHOS_UNIT_TEST(Tadiga_Geometry, face_Uknot_sequence_values) {
     geometry_parameters->set("File Name", "test.igs");
     tadiga::IgesGeometry iges_geometry_reader(kTestFixture->GetComm(),
                                               geometry_parameters);
-    auto actual_Uknot_sequence_ = kTestFixture->GetActual_UKnotSequence();
-    int U_sequence_length_ = iges_geometry_reader.GetUKnotSequenceLength();
-    int i;
-    for (i = 1; i <= U_sequence_length_; i = i + 1) {
-        TEST_EQUALITY(iges_geometry_reader.GetUKnotSequence()[i - 1],
-                      actual_Uknot_sequence_[i - 1]);
-    }
+
+    TEST_COMPARE_FLOATING_ARRAYS(iges_geometry_reader.GetUKnotSequence(),
+                                 kTestFixture->GetUKnotSequence(), 0.001);
 };
 
 TEUCHOS_UNIT_TEST(Tadiga_Geometry, face_Vknot_sequence_values) {
@@ -101,14 +94,8 @@ TEUCHOS_UNIT_TEST(Tadiga_Geometry, face_Vknot_sequence_values) {
     geometry_parameters->set("File Name", "test.igs");
     tadiga::IgesGeometry iges_geometry_reader(kTestFixture->GetComm(),
                                               geometry_parameters);
-    auto actual_Vknot_sequence_ = kTestFixture->GetActual_VKnotSequence();
-    int V_sequence_length_ = iges_geometry_reader.GetVKnotSequenceLength();
-    std::cout << "V length: " << V_sequence_length_ << endl;
 
-    int i;
-    for (i = 1; i <= V_sequence_length_; i = i + 1) {
-        TEST_EQUALITY(iges_geometry_reader.GetVKnotSequence()[i - 1],
-                      actual_Vknot_sequence_[i - 1]);
-    }
-};
+    TEST_COMPARE_FLOATING_ARRAYS(iges_geometry_reader.GetVKnotSequence(),
+                                 kTestFixture->GetVKnotSequence(), 0.001);
+}
 };

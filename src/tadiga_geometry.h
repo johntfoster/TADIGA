@@ -13,9 +13,10 @@
 // limitations under the License.
 #ifndef TADIGA_GEOMETRY_H
 #define TADIGA_GEOMETRY_H
+#include <vector>
+
 #include <Teuchos_Comm.hpp>
 #include <Teuchos_ParameterList.hpp>
-#include <array>
 
 #include "TColStd_Array1OfReal.hxx"
 #include "TopoDS.hxx"
@@ -47,9 +48,9 @@ class Geometry {
     auto GetUKnotSequenceLength() { return u_length_; }
     auto GetVKnotSequenceLength() { return v_length_; }
 
-    const auto &GetKnotSequence() { return knot_sequence_; }
-    const auto &GetUKnotSequence() { return u_knot_sequence_; }
-    const auto &GetVKnotSequence() { return v_knot_sequence_; }
+    const auto GetKnotSequence() { return knot_sequence_; }
+    const auto GetUKnotSequence() { return u_knot_sequence_; }
+    const auto GetVKnotSequence() { return v_knot_sequence_; }
 
    private:
     //! Private to prohibit copying.
@@ -59,21 +60,21 @@ class Geometry {
 
    protected:
     void initialize();
-    std::array<int, 2> knot_sequence_;
-    std::array<int, 4> u_knot_sequence_;
-    std::array<int, 4> v_knot_sequence_;
+    types::TadigaRealVector knot_sequence_;
+    types::TadigaRealVector u_knot_sequence_;
+    types::TadigaRealVector v_knot_sequence_;
 
     //  Communicator
     const Teuchos::RCP<const Teuchos::Comm<int>> &kComm_;
 
-    types::TadigaInt number_of_iges_entities_;
-    types::TadigaInt number_of_transferred_entities_;
-    types::TadigaInt number_of_u_knots_;
-    types::TadigaInt number_of_v_knots_;
-    types::TadigaInt number_of_knots_;
-    types::TadigaInt length_;
-    types::TadigaInt u_length_;
-    types::TadigaInt v_length_;
+    types::TadigaUnsignedInt number_of_iges_entities_;
+    types::TadigaUnsignedInt number_of_transferred_entities_;
+    types::TadigaUnsignedInt number_of_u_knots_;
+    types::TadigaUnsignedInt number_of_v_knots_;
+    types::TadigaUnsignedInt number_of_knots_;
+    types::TadigaUnsignedInt length_;
+    types::TadigaUnsignedInt u_length_;
+    types::TadigaUnsignedInt v_length_;
     TopoDS_Shape transferred_occt_shape_;
     TopoDS_Shape nurbs_converted_shape_;
 };
