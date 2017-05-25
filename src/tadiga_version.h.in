@@ -1,4 +1,4 @@
-// Copyright 2015 John T. Foster
+// Copyright 2017 John T. Foster
 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,25 +11,9 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#ifndef TADIGA_H
-#define TADIGA_H
+#ifndef TADIGA_VERSION_H
+#define TADIGA_VERSION_H
 
-#include <Teuchos_Comm.hpp>
-#include <Teuchos_ParameterList.hpp>
-
-#include "tadiga_geometry.h"
-
-namespace tadiga {
-
-class Tadiga {
-   public:
-    Tadiga(const Teuchos::RCP<const Teuchos::Comm<int> >& kComm,
-           Teuchos::RCP<Teuchos::ParameterList> parameters,
-           Teuchos::RCP<tadiga::Geometry> tadiga_geometry);
-
-   private:
-    Teuchos::RCP<Teuchos::ParameterList> parameters_;
-};
-}
+#define Tadiga_GIT_COMMIT_HASH "@Tadiga_GIT_COMMIT_HASH@"
 
 #endif

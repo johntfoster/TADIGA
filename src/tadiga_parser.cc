@@ -1,4 +1,4 @@
-// Copyright 2015 John T. Foster
+// Copyright 2017 John T. Foster
 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,6 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 #include "Teuchos_ParameterList.hpp"
 #include "Teuchos_RCP.hpp"
 #include "Teuchos_XMLParameterListHelpers.hpp"
@@ -43,7 +44,7 @@ Teuchos::RCP<Teuchos::ParameterList> tadiga::TadigaParser::parse(
         tadiga_parameters.get());
 
     Teuchos::updateParametersFromYamlCString(
-        (aprepro.parsing_results().str()).c_str(), tadiga_parameters_ptr);
+        (aprepro.parsing_results().str()).c_str(), tadiga_parameters_ptr, true);
 
     return tadiga_parameters;
 }

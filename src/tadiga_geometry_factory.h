@@ -31,7 +31,7 @@ class GeometryFactory {
     virtual ~GeometryFactory(){};
 
     virtual Teuchos::RCP<Geometry> create(
-        const Teuchos::RCP<const Teuchos::Comm<int>>& kComm);
+        const Teuchos::RCP<const Teuchos::Comm<int> >& kComm);
 
    private:
     //! Private to prohibit copying

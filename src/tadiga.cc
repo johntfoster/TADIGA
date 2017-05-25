@@ -11,9 +11,8 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 #include "tadiga.h"
 
-tadiga::Tadiga::Tadiga(const Teuchos::RCP<const Teuchos::Comm<int>>& kComm,
+tadiga::Tadiga::Tadiga(const Teuchos::RCP<const Teuchos::Comm<int> >& kComm,
                        Teuchos::RCP<Teuchos::ParameterList> parameters,
                        Teuchos::RCP<tadiga::Geometry> tadiga_geometry){};

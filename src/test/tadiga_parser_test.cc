@@ -50,7 +50,7 @@ TEUCHOS_UNIT_TEST(Parser, Default) {
         tadiga::TadigaParser::parse(kTestFixture->GetFileName());
 
     // Retrieve value of "Verbose"
-    const bool default_verbose_value = parameters->get<bool>("Verbose");
+    const auto default_verbose_value = parameters->get<bool>("Verbose");
 
     TEST_EQUALITY(default_verbose_value, false)
 }
@@ -64,14 +64,16 @@ TEUCHOS_UNIT_TEST(Parser, File) {
 
     parameters->set("Verbose", true);
 
+    const auto& kParameters = *parameters;
+
     Teuchos::YAMLParameterList::writeYamlFile(kTestFixture->GetFileName(),
-                                              parameters);
+                                              kParameters);
 
     // Reads the parsed parameters
     parameters = tadiga::TadigaParser::parse(kTestFixture->GetFileName());
 
     // Retrieve
-    const bool verbose_value = parameters->get<bool>("Verbose");
+    const auto verbose_value = parameters->get<bool>("Verbose");
 
     TEST_EQUALITY(verbose_value, true)
 }
@@ -84,14 +86,19 @@ TEUCHOS_UNIT_TEST(Parser, Double_Multiplication) {
 
     parameters->set("Double Multiply", "{2.2 * 2.0}");
 
+    const auto& kParameters = *parameters;
+
     Teuchos::YAMLParameterList::writeYamlFile(kTestFixture->GetFileName(),
-                                              parameters);
+                                              kParameters);
 
     // Reads the parsed parameters
     parameters = tadiga::TadigaParser::parse(kTestFixture->GetFileName());
 
     // Retrieve
-    const double double_value = parameters->get<double>("Double Multiply");
+    const auto double_string_value =
+        parameters->get<std::string>("Double Multiply");
+    // Convert to double
+    const auto double_value = std::stod(double_string_value, nullptr);
 
     TEST_FLOATING_EQUALITY(double_value, 4.4, 1e-14)
 }
@@ -105,14 +112,18 @@ TEUCHOS_UNIT_TEST(Parser, Pi_Value) {
 
     parameters->set("Pi", "{PI}");
 
+    const auto& kParameters = *parameters;
+
     Teuchos::YAMLParameterList::writeYamlFile(kTestFixture->GetFileName(),
-                                              parameters);
+                                              kParameters);
 
     // Reads the parsed parameters
     parameters = tadiga::TadigaParser::parse(kTestFixture->GetFileName());
 
     // Retrieve
-    const double pi_value = parameters->get<double>("Pi");
+    const auto pi_string_value = parameters->get<std::string>("Pi");
+    // Convert to double
+    const auto pi_value = std::stod(pi_string_value, nullptr);
 
     TEST_FLOATING_EQUALITY(pi_value, 3.1415, 1e-4)
 }
@@ -125,14 +136,18 @@ TEUCHOS_UNIT_TEST(Parser, Function) {
 
     parameters->set("Function", "{4.0 * atan(1.0)}");
 
+    const auto& kParameters = *parameters;
+
     Teuchos::YAMLParameterList::writeYamlFile(kTestFixture->GetFileName(),
-                                              parameters);
+                                              kParameters);
 
     // Reads the parsed parameters
     parameters = tadiga::TadigaParser::parse(kTestFixture->GetFileName());
 
     // Retrieve
-    const double function_value = parameters->get<double>("Function");
+    const auto function_string_value = parameters->get<std::string>("Function");
+    // Convert to double
+    const auto function_value = std::stod(function_string_value, nullptr);
 
     TEST_FLOATING_EQUALITY(function_value, 3.1415, 1e-4)
 }
@@ -145,14 +160,18 @@ TEUCHOS_UNIT_TEST(Parser, Relational) {
 
     parameters->set("Relational", "{8 < 10}");
 
+    const auto& kParameters = *parameters;
+
     Teuchos::YAMLParameterList::writeYamlFile(kTestFixture->GetFileName(),
-                                              parameters);
+                                              kParameters);
 
     // Reads the parsed parameters
     parameters = tadiga::TadigaParser::parse(kTestFixture->GetFileName());
 
     // Retrieve
-    const int int_value = parameters->get<int>("Relational");
+    const auto int_string_value = parameters->get<std::string>("Relational");
+    // Convert to int
+    const auto int_value = std::stoi(int_string_value, nullptr);
 
     TEST_EQUALITY(int_value, 1)
 }

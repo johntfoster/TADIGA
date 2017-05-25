@@ -19,7 +19,7 @@
 // Factory Method to create Tadiga objects
 Teuchos::RCP<tadiga::Tadiga> tadiga::TadigaFactory::create(
     const std::string kInputFile,
-    const Teuchos::RCP<const Teuchos::Comm<int>>& kComm,
+    const Teuchos::RCP<const Teuchos::Comm<int> >& kComm,
     Teuchos::RCP<tadiga::Geometry> tadiga_geometry) {
     const auto tadiga_parameters = tadiga::TadigaParser::parse(kInputFile);
 
@@ -30,7 +30,7 @@ Teuchos::RCP<tadiga::Tadiga> tadiga::TadigaFactory::create(
 
 Teuchos::RCP<tadiga::Tadiga> tadiga::TadigaFactory::create(
     const std::string kInputFile,
-    const Teuchos::RCP<const Teuchos::Comm<int>>& kComm) {
+    const Teuchos::RCP<const Teuchos::Comm<int> >& kComm) {
     Teuchos::RCP<tadiga::Geometry> null_geometry;
     return create(kInputFile, kComm, null_geometry);
 }

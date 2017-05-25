@@ -5,6 +5,9 @@ services:
   - docker
 
 language: cpp
+
+cache: ccache
+
 os:
     - linux
     - osx
@@ -29,33 +32,26 @@ before_install:
       fi
       fi
     - if [ "$TRAVIS_OS_NAME" = "linux" ]; then
-      sudo apt-get update;
-      sudo apt-get -yq install gfortran build-essential  libopenmpi-dev openmpi-bin libblas-dev liblapack-dev libboost-dev python cmake git libyaml-cpp0.5 libyaml-cpp-dev;
+      sudo apt-get -qq update;
+      sudo apt-add-repository 'deb http://archive.ubuntu.com/ubuntu wily main';
+      sudo apt-get -qq install lcov cmake libblas-dev liblapack-dev libboost-dev python libyaml-cpp0.5 libyaml-cpp-dev liboce-foundation-dev liboce-foundation8 liboce-modeling-dev liboce-modeling8 liboce-ocaf-dev liboce-ocaf8 ;
       elif [ "$TRAVIS_OS_NAME" = "osx" ]; then
-      brew update ;
-      brew install gcc openmpi yaml-cpp;
-      brew upgrade boost python cmake git ;
+      brew update;
+      brew tap homebrew/science;
+      brew install ccache lcov yaml-cpp homebrew/science/opencascade;
+      brew upgrade boost python cmake git;
+      PATH=$PATH:/usr/local/opt/ccache/libexec;
       fi
-    - git clone https://github.com/trilinos/Trilinos.git trilinos;
-    - mkdir trilinos/build
-    - cd trilinos/build
-    - if [ "$TRAVIS_OS_NAME" = "linux" ]; then
-      cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr/local/trilinos/ -DCMAKE_BUILD_TYPE:STRING=Release -DBUILD_SHARED_LIBS:BOOL=OFF -DCMAKE_CXX_FLAGS:STRING="-Wno-unused -std=c++11" -DCMAKE_Fortran_COMPILER:STRING="mpif90" -DTrilinos_ENABLE_ALL_PACKAGES:BOOL=OFF -DTrilinos_ENABLE_ALL_OPTIONAL_PACKAGES:BOOL=OFF -DTrilinos_ENABLE_ALL_FORWARD_DEP_PACKAGES:BOOL=OFF -DTrilinos_ENABLE_Teuchos:BOOL=ON -DTrilinos_ENABLE_Tpetra:BOOL=ON -DTrilinos_ENABLE_SEACASAprepro=ON -DTPL_ENABLE_MPI:BOOL=ON -DMPI_BASE_DIR:PATH=/usr -DTPL_ENABLE_BLAS:BOOL=ON -DTPL_ENABLE_LAPACK:BOOL=ON -DTPL_ENABLE_Boost:BOOL=ON -DTPL_Boost_INCLUDE_DIRS:PATH=/usr/include/boost -DTPL_ENABLE_QT:BOOL=OFF -DTPL_ENABLE_X11:BOOL=OFF -DCMAKE_VERBOSE_MAKEFILE:BOOL=OFF -DTrilinos_VERBOSE_CONFIGURE:BOOL=OFF -DTeuchosCore_ENABLE_yaml-cpp:BOOL=ON -DTPL_ENABLE_yaml-cpp:BOOL=ON -Dyaml-cpp_INCLUDE_DIRS:PATH=/usr/include/yaml-cpp -DTPL_yaml-cpp_LIBRARIES:FILEPATH=/usr/lib/x86_64-linux-gnu/libyaml-cpp.so.0.5 .. ;
-      elif [ "$TRAVIS_OS_NAME" = "osx" ]; then
-      cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr/local/trilinos/ -DCMAKE_BUILD_TYPE:STRING=Release -DBUILD_SHARED_LIBS:BOOL=OFF -DCMAKE_CXX_FLAGS:STRING="-Wno-unused -std=c++11" -DCMAKE_Fortran_COMPILER:STRING="mpif90" -DTrilinos_ENABLE_ALL_PACKAGES:BOOL=OFF -DTrilinos_ENABLE_ALL_OPTIONAL_PACKAGES:BOOL=OFF -DTrilinos_ENABLE_ALL_FORWARD_DEP_PACKAGES:BOOL=OFF -DTrilinos_ENABLE_Teuchos:BOOL=ON -DTrilinos_ENABLE_Tpetra:BOOL=ON -DTrilinos_ENABLE_SEACASAprepro=ON -DTPL_ENABLE_MPI:BOOL=ON -DMPI_BASE_DIR:PATH=/usr -DTPL_ENABLE_BLAS:BOOL=ON -DTPL_ENABLE_LAPACK:BOOL=ON -DTPL_ENABLE_Boost:BOOL=ON -DTPL_Boost_INCLUDE_DIRS:PATH=/usr/include/boost -DTPL_ENABLE_QT:BOOL=OFF -DTPL_ENABLE_X11:BOOL=OFF -DCMAKE_VERBOSE_MAKEFILE:BOOL=OFF -DTrilinos_VERBOSE_CONFIGURE:BOOL=OFF -DTeuchosCore_ENABLE_yaml-cpp:BOOL=ON -DTPL_ENABLE_yaml-cpp:BOOL=ON -Dyaml-cpp_INCLUDE_DIRS:PATH=/usr/include -DTPL_yaml-cpp_LIBRARIES:FILEPATH=/usr/local/lib/libyaml-cpp.0.5.dylib .. ;
-      fi
-    - make -j8 
-    - sudo make install
 
 install:
     - if [ "$TRAVIS_BRANCH" != "coverity_scan" ]; then 
-      mkdir ../../build; 
-      cd ../../build; 
-      cmake -DCMAKE_BUILD_TYPE:STRING=Debug -DCMAKE_INSTALL_PREFIX:PATH=/usr/local/tadiga -DCMAKE_CXX_FLAGS:STRING='-std=c++11' -DTRILINOS_DIR:PATH=/usr/local/trilinos/lib/cmake/Trilinos -DCMAKE_CXX_COMPILER:STRING='mpicxx' -DCOVERALLS:BOOL=ON .. ;
+      mkdir build; 
+      cd build; 
+      cmake -DCMAKE_BUILD_TYPE:STRING=Debug -DCMAKE_INSTALL_PREFIX:PATH=/usr/local/tadiga -DBUILD_Trilinos:BOOL=ON -DCOVERAGE:BOOL=ON .. ;
       make -j8;
       fi
 
-script: if [ "$TRAVIS_BRANCH" != "coverity_scan" ]; then make coveralls; fi
+script: if [ "$TRAVIS_BRANCH" != "coverity_scan" ]; then make test; fi
 
 addons:
   coverity_scan:
@@ -63,14 +59,19 @@ addons:
       name: "johntfoster/TaDIgA"
       description: "Build submitted via Travis CI"
     notification_email: johntfosterjr@gmail.com
-    build_command_prepend: "mkdir ../../build; cd ../../build; cmake -D CMAKE_BUILD_TYPE:STRING=Debug -D CMAKE_INSTALL_PREFIX:PATH=/usr/local/tadiga -D CMAKE_CXX_FLAGS:STRING='-std=c++11' -D TRILINOS_DIR:PATH=/usr/local/trilinos/lib/cmake/Trilinos -D CMAKE_CXX_COMPILER:STRING='mpicxx' .."
+    build_command_prepend: "mkdir ../../build; cd ../../build; cmake -D CMAKE_BUILD_TYPE:STRING=Debug -D CMAKE_INSTALL_PREFIX:PATH=/usr/local/tadiga -DBUILD_Trilinos:BOOL=ON .."
     build_command: "make -j8"
     branch_pattern: coverity_scan
 
 after_success:
-  - if [ "$TRAVIS_BRANCH" != "coverity_scan" ] && [ "$TRAVIS_OS_NAME" = "linux" ] && [ "$CXX" == "g++" ]; then
+  - if [ "$TRAVIS_BRANCH" != "coverity_scan" ]; then 
+    if [ ${TRAVIS_JOB_NUMBER##*.} = 1 ] ; then
+    gem install coveralls-lcov;
+    make coverage;
+    coveralls-lcov coverage.info.cleaned;
     cd .. ;
     docker build -t johntfoster/tadiga:latest . ;
     docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD" ;
     docker push johntfoster/tadiga:latest ;
+    fi;
     fi

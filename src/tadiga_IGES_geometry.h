@@ -26,7 +26,7 @@ class IgesGeometry : public tadiga::Geometry {
    public:
     // Constructor
     IgesGeometry(
-        const Teuchos::RCP<const Teuchos::Comm<int>>& kComm,
+        const Teuchos::RCP<const Teuchos::Comm<int> >& kComm,
         const Teuchos::RCP<Teuchos::ParameterList>& kGeometryParameters);
 
    private:
@@ -38,7 +38,7 @@ class IgesGeometry : public tadiga::Geometry {
 
    protected:
     //  Communicator
-    const Teuchos::RCP<const Teuchos::Comm<int>>& kComm_;
+    const Teuchos::RCP<const Teuchos::Comm<int> >& kComm_;
 };
 }
 

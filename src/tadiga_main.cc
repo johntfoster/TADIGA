@@ -18,6 +18,7 @@
 #include "Tpetra_DefaultPlatform.hpp"
 
 #include "tadiga_factory.h"
+#include "tadiga_version.h"
 
 int main(int argc, char* argv[]) {
     // Initialize MPI
@@ -30,7 +31,7 @@ int main(int argc, char* argv[]) {
 
     // Banner
     if (kRank == 0) {
-        std::cout << "\n-- TaDIgA" << std::endl;
+        std::cout << "\n-- TaDIgA v " << Tadiga_GIT_COMMIT_HASH << std::endl;
         if (kNumberOfProcessors > 1)
             std::cout << "MPI initialized on " << kNumberOfProcessors
                       << " processors.\n"

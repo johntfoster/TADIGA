@@ -30,12 +30,12 @@ class TadigaFactory {
 
     virtual Teuchos::RCP<tadiga::Tadiga> create(
         const std::string kInputFile,
-        const Teuchos::RCP<const Teuchos::Comm<int>>& kComm,
+        const Teuchos::RCP<const Teuchos::Comm<int> >& kComm,
         Teuchos::RCP<tadiga::Geometry> tadiga_geometry);
 
     virtual Teuchos::RCP<tadiga::Tadiga> create(
         const std::string kInputFile,
-        const Teuchos::RCP<const Teuchos::Comm<int>>& kComm);
+        const Teuchos::RCP<const Teuchos::Comm<int> >& kComm);
 
    private:
     // Private copy constructor to prohibit copying.

@@ -29,7 +29,7 @@ tadiga::GeometryFactory::GeometryFactory(
 }
 
 Teuchos::RCP<tadiga::Geometry> tadiga::GeometryFactory::create(
-    const Teuchos::RCP<const Teuchos::Comm<int>>& kComm) {
+    const Teuchos::RCP<const Teuchos::Comm<int> >& kComm) {
     Teuchos::RCP<tadiga::Geometry> geometry;
 
     auto type = kGeometryParameters_->get<std::string>("Type");
