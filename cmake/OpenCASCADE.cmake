@@ -19,7 +19,7 @@ endif()
 
 #If BUILD_OpenCASACADE=OFF we need to look for a OpenCASCADE installation
 if(NOT BUILD_OpenCASCADE)
-    find_package(OpenCASCADE QUIET COMPONENTS TKernel)
+    find_package(OpenCASCADE QUIET COMPONENTS TKernel TKG3d TKXSBase TKBRep TKTopAlgo TKIGES TKMath)
 message(STATUS "-- OpenCASCADE include directory: ${OpenCASCADE_INCLUDE_DIRS}")
 message(STATUS "-- OpenCASCADE libraries: ${OpenCASCADE_LIBRARIES}")
     if(OpenCASCADE_FOUND)
