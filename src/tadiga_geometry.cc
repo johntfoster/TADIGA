@@ -65,7 +65,7 @@ void tadiga::Geometry::initialize() {
         // Print  knot vector to integer array
         std::cout << "Edge #" << edge_counter << " Knot Sequence:";
 
-        for (tadiga::types::TadigaUnsignedInt i = 0; i < length_; ++i) {
+        for (tadiga::types::TadigaUnsignedInt i = 1; i < length_; i += 1) {
             std::cout << " " << knot_sequence.Value(i);
             knot_sequence_[i - 1] = knot_sequence.Value(i);
         }
@@ -76,10 +76,10 @@ void tadiga::Geometry::initialize() {
     // Look for TopoDS_Faces in nurbs_converted_shape
     tadiga::types::TadigaUnsignedInt face_counter = 1;
 
-    shape_explorer = TopExp_Explorer(nurbs_converted_shape_, TopAbs_FACE);
-    for (auto const& shape = shape_explorer.Current(); shape_explorer.More();
-         shape_explorer.Next()) {
-        const auto extracted_face = TopoDS::Face(shape);
+    for (shape_explorer.Init(nurbs_converted_shape_, TopAbs_FACE);
+         shape_explorer.More(); shape_explorer.Next()) {
+        const TopoDS_Face& extracted_face =
+            TopoDS::Face(shape_explorer.Current());
 
         const auto brep_adaptor_surface =
             Teuchos::rcp(new BRepAdaptor_Surface(extracted_face));
