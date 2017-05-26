@@ -26,7 +26,7 @@ matrix:
                       - libyaml-cpp0.5 
                       - libyaml-cpp-dev 
           env: 
-              - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6 && cmake -DCMAKE_BUILD_TYPE:STRING=Debug -DBUILD_Trilinos:BOOL=ON -DCOVERAGE:BOOL=ON -D_GLIBCXX_USE_CXX11_ABI=0 .."
+              - MATRIX_EVAL="cmake -DCMAKE_C_COMPILER=gcc-6 -DCMAKE_CXX_COMPILER=g++-6 -DCMAKE_BUILD_TYPE:STRING=Debug -DBUILD_Trilinos:BOOL=ON -DCOVERAGE:BOOL=ON .."
         - os: linux
           addons:
               apt:
@@ -42,13 +42,13 @@ matrix:
                       - libyaml-cpp0.5 
                       - libyaml-cpp-dev 
           env: 
-              - MATRIX_EVAL="CC=clang-5.0 && CXX=clang++-5.0 && cmake -DCMAKE_BUILD_TYPE:STRING=Debug -DBUILD_Trilinos:BOOL=ON .."
+              - MATRIX_EVAL="cmake -CMAKE_CXX_COMPILER=clang++-5.0 -DCMAKE_C_COMPILER=clang-5.0 -DCMAKE_BUILD_TYPE:STRING=Debug -DBUILD_Trilinos:BOOL=ON .."
         - os: osx
           env: 
-              - MATRIX_EVAL="CC=gcc && CXX=g++ && cmake -DCMAKE_BUILD_TYPE:STRING=Debug -DBUILD_Trilinos:BOOL=ON .."
+              - MATRIX_EVAL="cmake -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ -DCMAKE_BUILD_TYPE:STRING=Debug -DBUILD_Trilinos:BOOL=ON .."
         - os: osx
           env: 
-              - MATRIX_EVAL="CC=clang && CXX=clang++ && cmake -DCMAKE_BUILD_TYPE:STRING=Debug -DBUILD_Trilinos:BOOL=ON .."
+              - MATRIX_EVAL="cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE:STRING=Debug -DBUILD_Trilinos:BOOL=ON .."
 
 env:
   global:
@@ -74,7 +74,7 @@ before_install:
       sudo apt-get -qy install liboce-foundation-dev liboce-foundation8 liboce-modeling-dev liboce-modeling8 liboce-ocaf-dev liboce-ocaf8;
       elif [ "$TRAVIS_OS_NAME" = "osx" ]; then
       brew tap homebrew/science;
-      brew install ccache lcov yaml-cpp homebrew/science/opencascade;
+      brew install ccache yaml-cpp homebrew/science/opencascade;
       brew upgrade boost python cmake git;
       PATH=$PATH:/usr/local/opt/ccache/libexec;
       fi
