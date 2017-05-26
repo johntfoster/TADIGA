@@ -44,6 +44,7 @@ if(MPI_FOUND)
     target_link_libraries(tadiga_library PRIVATE mpi)
 endif()
 set_property(TARGET tadiga_library PROPERTY OUTPUT_NAME tadiga)
+set_property(TARGET tadiga_library PROPERTY CXX_STANDARD 14)
 target_include_directories(tadiga_library PUBLIC ${CMAKE_CURRENT_LIST_DIR})
 target_compile_features(tadiga_library PUBLIC cxx_auto_type cxx_return_type_deduction)
 
@@ -53,6 +54,7 @@ target_compile_features(tadiga_library PUBLIC cxx_auto_type cxx_return_type_dedu
 add_executable(tadiga tadiga_main.cc)
 target_include_directories(tadiga PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/src)
 target_link_libraries(tadiga tadiga_library)
+set_property(TARGET tadiga PROPERTY CXX_STANDARD 14)
 
 #
 # Install target for Tadiga main executable
