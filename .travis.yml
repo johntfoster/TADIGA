@@ -33,7 +33,7 @@ before_install:
       fi
     - if [ "$TRAVIS_OS_NAME" = "linux" ]; then
       sudo apt-add-repository 'deb http://archive.ubuntu.com/ubuntu wily main';
-      sudo add-apt-repository -yq ppa:ubuntu-toolchain-r/test;
+      sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test;
       sudo apt-get -qy install gcc-5 g++-5;
       sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5 60 --slave /usr/bin/g++ g++ /usr/bin/g++-5;
       sudo apt-get -qy install lcov cmake libblas-dev liblapack-dev libboost-dev python libyaml-cpp0.5 libyaml-cpp-dev liboce-foundation-dev liboce-foundation8 liboce-modeling-dev liboce-modeling8 liboce-ocaf-dev liboce-ocaf8 ;
