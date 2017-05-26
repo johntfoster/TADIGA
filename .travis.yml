@@ -15,7 +15,7 @@ matrix:
               apt:
                   sources: 
                       - ubuntu-toolchain-r-test
-                      - 'deb http://archive.ubuntu.com/ubuntu wily main';
+                      - 'deb http://archive.ubuntu.com/ubuntu wily main'
                   packages: 
                       - g++-6
                       - lcov 
