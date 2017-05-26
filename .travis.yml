@@ -38,6 +38,7 @@ before_install:
       sudo apt-get -qy install gcc-5 g++-5;
       sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5 60 --slave /usr/bin/g++ g++ /usr/bin/g++-5;
       sudo apt-get -qy install lcov cmake libblas-dev liblapack-dev libboost-dev python libyaml-cpp0.5 libyaml-cpp-dev liboce-foundation-dev liboce-foundation8 liboce-modeling-dev liboce-modeling8 liboce-ocaf-dev liboce-ocaf8 ;
+      sudo apt-get autoremove;
       elif [ "$TRAVIS_OS_NAME" = "osx" ]; then
       brew update;
       brew tap homebrew/science;
