@@ -8,12 +8,24 @@ language: cpp
 
 cache: ccache
 
-os:
-    - linux
-    - osx
-compiler: 
-    - gcc
-    - clang
+matrix:
+    include:
+        - os: linux
+          addons:
+              apt:
+                  sources: ubuntu-toolchain-r-test
+                  packages: g++-6
+          env: MATRIX_EVAL="CC=gcc-6 && CXX=g++-6"
+        - os: linux
+          addons:
+              apt:
+                  sources: llvm-toolchain-trusty
+                  packages: clang-5.0
+          env: MATRIX_EVAL="CC=clang-5.0 && CXX=clang++-5.0"
+        - os: osx
+          env: MATRIX_EVAL="CC=gcc && CXX=g++"
+        - os: osx
+          env: MATRIX_EVAL="CC=clang && CXX=clang++"
 
 env:
   global:
@@ -22,6 +34,9 @@ env:
      - secure: "dzxl+sy/vc2/hPAL9VfRlS3aa8CY5NZDLRfbx+9lLAYC8qmKWPtZwOyEa9RMx6Od1kHS6oNemNwFNCHiIPkH53031gqTXdMS/qHoZAjhRa1ejBE0L0HePdeJAamuJdFnW83PT+qcSWIwmedcaRYfhoYEn6H2TFF47uuhMGuhWz/SmC4Q9u+h8ocEW2uoCOMdLFLWtGyJDh0B3tvDrk+9pxVoJdBzwDAkHh6zoKBAgBQzCm171FC9XwdEvnmnmd/UudRnCDvKz7NZvCRW0FxE/yrli8UrhtAXJzGdYDkcyp5h4NIT4xkKvYgr/MJPsDluJCmOT63Mpcw5BbPhd0xrTMJx1RBIBPUodF/2tJMIp6INt3b51YRa8FniSjz8ih8woIfY+TtNIkKmsC4Aq3hQhM1HNL22B+YNl1VJ2m8EmllvvjMC0sYOYgzb5SA91qDJVm4qSwHI/QWJKscBdvBKv8PEaNLJyNuRc6URz4ukfjcXUJRepZZ5B6kTJAO/EIAGWuc1slzWJmSkc4EEU8QEyM9tUdxjRA+/73wVaJWzi2G92PfKBiz7+YRwLF1zX3hpQ9IrLltEuKQYXS5dHPuRrrL+deCAZTDiCaqnjbS/KPqDAR2yjhW5idLnuiTduLFaReUz0RmnL/03VFLdSbAziziGn0n1tcOEIHQBc1o9ocA="
 
 before_install:
+    - test -n $CC && unset CC
+    - test -n $CXX && unset CXX
+    - eval "${MATRIX_EVAL}"
     - if [ "$TRAVIS_BRANCH" == "coverity_scan" ] ; then 
       if [ ${TRAVIS_JOB_NUMBER##*.} = 1 ] ; then
       echo -n | openssl s_client -connect scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca- ;
