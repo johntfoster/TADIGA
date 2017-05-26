@@ -15,11 +15,10 @@ matrix:
               apt:
                   sources: 
                       - ubuntu-toolchain-r-test
-                      - sourceline: 'deb http://archive.ubuntu.com/ubuntu wily main'
                   packages: 
                       - g++-6
                       - lcov 
-                      - cmake 
+                      - curl
                       - libblas-dev 
                       - liblapack-dev 
                       - libboost-dev 
@@ -33,15 +32,15 @@ matrix:
               apt:
                   sources: 
                      - llvm-toolchain-trusty
-                     - sourceline: 'deb http://archive.ubuntu.com/ubuntu wily main'
                   packages: 
                       - clang-5.0
-                      - cmake 
+                      - curl
                       - libblas-dev 
                       - liblapack-dev 
                       - libboost-dev 
                       - python 
                       - libyaml-cpp0.5 
+                      - libyaml-cpp-dev 
           env: 
               - MATRIX_EVAL="CC=clang-5.0 && CXX=clang++-5.0 && cmake -DCMAKE_BUILD_TYPE:STRING=Debug -DBUILD_Trilinos:BOOL=ON .."
         - os: osx
@@ -70,6 +69,8 @@ before_install:
       fi
       fi
     - if [ "$TRAVIS_OS_NAME" = "linux" ]; then
+      curl -sSL https://cmake.org/files/v3.8/cmake-3.8.1-Linux-x86_64.tar.gz | sudo tar -xzC /opt;
+      alias cmake=/opt/cmake-3.8.1-Linux-x86_64/bin/cmake;
       sudo apt-get -qy install liboce-foundation-dev liboce-foundation8 liboce-modeling-dev liboce-modeling8 liboce-ocaf-dev liboce-ocaf8;
       elif [ "$TRAVIS_OS_NAME" = "osx" ]; then
       brew tap homebrew/science;

@@ -22,13 +22,10 @@ RUN apt-get -yq install gcc \
                         liboce-modeling-dev \ 
                         liboce-modeling8 \
                         liboce-ocaf-dev \
-                        liboce-ocaf8
+                        liboce-ocaf8 \
+                        curl
 
-RUN wget https://cmake.org/files/v3.8/cmake-3.8.0.tar.gz; \
-    tar xzvf cmake-3.8.0.tar.gz; \
-    cd cmake-3.8.0; \
-    ./configure --prefix=/usr/local; \
-    make -j8 && make install
+RUN curl -sSL https://cmake.org/files/v3.8/cmake-3.8.1-Linux-x86_64.tar.gz | sudo tar -xzC /opt;
 
 RUN rm -rf cmake*
 
@@ -42,7 +39,7 @@ ADD CMakeLists.txt .
 RUN mkdir build
 
 WORKDIR build/
-RUN /usr/local/bin/cmake \
+RUN /opt/cmake-3.8.1-Linux-x86_64/bin/cmake \
     -D CMAKE_BUILD_TYPE:STRING=Release \
     -D CMAKE_INSTALL_PREFIX:PATH=/usr/local/tadiga \
     -D BUILD_Trilinos:BOOL=ON \
