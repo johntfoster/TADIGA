@@ -15,7 +15,7 @@ matrix:
               apt:
                   sources: 
                       - ubuntu-toolchain-r-test
-                      - 'deb http://archive.ubuntu.com/ubuntu wily main'
+                      - sourceline: 'deb http://archive.ubuntu.com/ubuntu wily main'
                   packages: 
                       - g++-6
                       - lcov 
@@ -33,7 +33,7 @@ matrix:
               apt:
                   sources: 
                      - llvm-toolchain-trusty
-                     - 'deb http://archive.ubuntu.com/ubuntu wily main'
+                     - sourceline: 'deb http://archive.ubuntu.com/ubuntu wily main'
                   packages: 
                       - clang-5.0
                       - cmake 
