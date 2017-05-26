@@ -83,7 +83,7 @@ install:
     - if [ "$TRAVIS_BRANCH" != "coverity_scan" ]; then 
       mkdir build; 
       cd build; 
-      eval "${MATRIX_EVAL}"
+      eval "${MATRIX_EVAL}";
       make -j8;
       fi
 
