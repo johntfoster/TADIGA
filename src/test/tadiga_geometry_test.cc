@@ -46,7 +46,7 @@ class TestSetup {
     Teuchos::RCP<const Teuchos::Comm<int>> kComm_ =
         Tpetra::DefaultPlatform::getDefaultPlatform().getComm();
 
-    tadiga::types::TadigaRealArray<2> knot_sequence_ = {0, 1};
+    tadiga::types::TadigaRealArray<8> knot_sequence_ = {0, 1, 0, 1, 0, 1, 0, 1};
     tadiga::types::TadigaRealArray<4> u_knot_sequence_ = {0, 0, 1, 1};
     tadiga::types::TadigaRealArray<4> v_knot_sequence_ = {0, 0, 1, 1};
 };
@@ -67,7 +67,7 @@ TEUCHOS_UNIT_TEST(Tadiga_Geometry, curve_knot_sequence_values) {
                         kTestFixture->GetKnotSequence());
 };
 
-TEUCHOS_UNIT_TEST(Tadiga_Geometry, face_Uknot_sequence_values) {
+TEUCHOS_UNIT_TEST(Tadiga_Geometry, face_u_knot_sequence_values) {
     const auto kTestFixture = Teuchos::rcp(new TestSetup());
 
     auto parameters = Teuchos::rcp(new Teuchos::ParameterList());
@@ -83,7 +83,7 @@ TEUCHOS_UNIT_TEST(Tadiga_Geometry, face_Uknot_sequence_values) {
                                  kTestFixture->GetUKnotSequence(), 0.001);
 };
 
-TEUCHOS_UNIT_TEST(Tadiga_Geometry, face_Vknot_sequence_values) {
+TEUCHOS_UNIT_TEST(Tadiga_Geometry, face_v_knot_sequence_values) {
     const auto kTestFixture = Teuchos::rcp(new TestSetup());
 
     auto parameters = Teuchos::rcp(new Teuchos::ParameterList());
