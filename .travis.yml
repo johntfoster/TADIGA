@@ -13,19 +13,43 @@ matrix:
         - os: linux
           addons:
               apt:
-                  sources: ubuntu-toolchain-r-test
-                  packages: g++-6
-          env: MATRIX_EVAL="CC=gcc-6 && CXX=g++-6"
+                  sources: 
+                      - ubuntu-toolchain-r-test
+                      - 'deb http://archive.ubuntu.com/ubuntu wily main';
+                  packages: 
+                      - g++-6
+                      - lcov 
+                      - cmake 
+                      - libblas-dev 
+                      - liblapack-dev 
+                      - libboost-dev 
+                      - python 
+                      - libyaml-cpp0.5 
+                      - libyaml-cpp-dev 
+          env: 
+              - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6 && cmake -DCMAKE_BUILD_TYPE:STRING=Debug -DBUILD_Trilinos:BOOL=ON -DCOVERAGE:BOOL=ON -D_GLIBCXX_USE_CXX11_ABI=0 .."
         - os: linux
           addons:
               apt:
-                  sources: llvm-toolchain-trusty
-                  packages: clang-5.0
-          env: MATRIX_EVAL="CC=clang-5.0 && CXX=clang++-5.0"
+                  sources: 
+                     - llvm-toolchain-trusty
+                     - 'deb http://archive.ubuntu.com/ubuntu wily main'
+                  packages: 
+                      - clang-5.0
+                      - cmake 
+                      - libblas-dev 
+                      - liblapack-dev 
+                      - libboost-dev 
+                      - python 
+                      - libyaml-cpp0.5 
+          env: 
+              - MATRIX_EVAL="CC=clang-5.0 && CXX=clang++-5.0 && cmake -DCMAKE_BUILD_TYPE:STRING=Debug -DBUILD_Trilinos:BOOL=ON .."
         - os: osx
-          env: MATRIX_EVAL="CC=gcc && CXX=g++"
+          env: 
+              - MATRIX_EVAL="CC=gcc && CXX=g++ && cmake -DCMAKE_BUILD_TYPE:STRING=Debug -DBUILD_Trilinos:BOOL=ON .."
         - os: osx
-          env: MATRIX_EVAL="CC=clang && CXX=clang++"
+          env: 
+              - MATRIX_EVAL="CC=clang && CXX=clang++ && cmake -DCMAKE_BUILD_TYPE:STRING=Debug -DBUILD_Trilinos:BOOL=ON .."
 
 env:
   global:
@@ -36,7 +60,6 @@ env:
 before_install:
     - test -n $CC && unset CC
     - test -n $CXX && unset CXX
-    - eval "${MATRIX_EVAL}"
     - if [ "$TRAVIS_BRANCH" == "coverity_scan" ] ; then 
       if [ ${TRAVIS_JOB_NUMBER##*.} = 1 ] ; then
       echo -n | openssl s_client -connect scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca- ;
@@ -47,11 +70,8 @@ before_install:
       fi
       fi
     - if [ "$TRAVIS_OS_NAME" = "linux" ]; then
-      sudo apt-add-repository 'deb http://archive.ubuntu.com/ubuntu wily main';
-      sudo apt-get -qq update;
-      sudo apt-get -qy install lcov cmake libblas-dev liblapack-dev libboost-dev python libyaml-cpp0.5 libyaml-cpp-dev liboce-foundation-dev liboce-foundation8 liboce-modeling-dev liboce-modeling8 liboce-ocaf-dev liboce-ocaf8 ;
+      sudo apt-get -qy install liboce-foundation-dev liboce-foundation8 liboce-modeling-dev liboce-modeling8 liboce-ocaf-dev liboce-ocaf8;
       elif [ "$TRAVIS_OS_NAME" = "osx" ]; then
-      brew update;
       brew tap homebrew/science;
       brew install ccache lcov yaml-cpp homebrew/science/opencascade;
       brew upgrade boost python cmake git;
@@ -62,7 +82,7 @@ install:
     - if [ "$TRAVIS_BRANCH" != "coverity_scan" ]; then 
       mkdir build; 
       cd build; 
-      cmake -DCMAKE_BUILD_TYPE:STRING=Debug -DCMAKE_INSTALL_PREFIX:PATH=/usr/local/tadiga -DBUILD_Trilinos:BOOL=ON -DCOVERAGE:BOOL=ON .. ;
+      eval "${MATRIX_EVAL}"
       make -j8;
       fi
 
