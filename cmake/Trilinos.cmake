@@ -133,7 +133,7 @@ else()
     execute_process(COMMAND ${CMAKE_COMMAND} --build .  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/trilinos-download)
 
     unset(Trilinos_DIR CACHE)
-    find_package(Trilinos PATHS ${CMAKE_BINARY_DIR}/trilinos/lib/cmake/Trilinos NO_DEFAULT_PATH REQUIRED)
+    find_package(Trilinos PATHS ${CMAKE_INSTALL_PREFIX}/trilinos/lib/cmake/Trilinos NO_DEFAULT_PATH REQUIRED)
     message(STATUS "Trilinos version ${Trilinos_VERSION} built successfully.\n")
 
 endif()
