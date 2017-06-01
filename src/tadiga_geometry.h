@@ -60,6 +60,7 @@ class Geometry {
 
    protected:
     void initialize();
+
     types::TadigaRealVector knot_sequence_;
     types::TadigaRealVector u_knot_sequence_;
     types::TadigaRealVector v_knot_sequence_;
@@ -69,9 +70,9 @@ class Geometry {
 
     types::TadigaUnsignedInt number_of_iges_entities_;
     types::TadigaUnsignedInt number_of_transferred_entities_;
-    types::TadigaUnsignedInt number_of_u_knots_;
-    types::TadigaUnsignedInt number_of_v_knots_;
-    types::TadigaUnsignedInt number_of_knots_;
+    Standard_Integer number_of_u_knots_;
+    Standard_Integer number_of_v_knots_;
+    Standard_Integer number_of_knots_;
     types::TadigaUnsignedInt length_;
     types::TadigaUnsignedInt u_length_;
     types::TadigaUnsignedInt v_length_;

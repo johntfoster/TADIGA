@@ -30,7 +30,7 @@ find_path(OpenCASCADE_INCLUDE_DIRS Standard_Version.hxx
                 /opt/local
                 /usr
                 /usr/local
-                ${CMAKE_CURRENT_BINARY_DIR}/oce-build
+                ${CMAKE_CURRENT_BINARY_DIR}/oce
                 PATH_SUFFIXES 
                 include
                 inc

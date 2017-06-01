@@ -56,10 +56,10 @@ TEUCHOS_UNIT_TEST(IGES_Geometry, number_of_IGES_entities) {
     geometry_parameters->set("Type", "IGES");
     geometry_parameters->set("File Name", "test.igs");
 
-    tadiga::IgesGeometry iges_geometry_reader(kTestFixture->GetComm(),
-                                              geometry_parameters);
+    const auto iges_geometry_reader = Teuchos::rcp(
+        new tadiga::IgesGeometry(kTestFixture->GetComm(), geometry_parameters));
 
-    TEST_EQUALITY(iges_geometry_reader.GetNumberIges_Entities(),
-                  iges_geometry_reader.GetNumberTransferred_Entities());
+    TEST_EQUALITY(iges_geometry_reader->GetNumberIges_Entities(),
+                  iges_geometry_reader->GetNumberTransferred_Entities());
 };
 };

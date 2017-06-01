@@ -26,37 +26,37 @@
 
 #include "tadiga_IGES_geometry.h"
 #include "tadiga_geometry.h"
+#include "tadiga_opencascade_utilities.h"
 
 tadiga::Geometry::Geometry(
-    const Teuchos::RCP<const Teuchos::Comm<int>>& kComm,
-    const Teuchos::RCP<Teuchos::ParameterList>& kGeometryParameters)
+    const Teuchos::RCP<const Teuchos::Comm<int>> &kComm,
+    const Teuchos::RCP<Teuchos::ParameterList> &kGeometryParameters)
     : kComm_(kComm){};
 
 void tadiga::Geometry::initialize() {
     // Convert transferred OCCT Shapes to NURBS & retrieve
-    const auto kNurbsConverter = Teuchos::rcp(new BRepBuilderAPI_NurbsConvert);
+    auto kNurbsConverter = BRepBuilderAPI_NurbsConvert();
 
-    kNurbsConverter->Perform(transferred_occt_shape_);
-
+    kNurbsConverter.Perform(transferred_occt_shape_);
     nurbs_converted_shape_ =
-        kNurbsConverter->ModifiedShape(transferred_occt_shape_);
+        kNurbsConverter.ModifiedShape(transferred_occt_shape_);
 
     tadiga::types::TadigaUnsignedInt edge_counter = 1;
 
     // Look for ToopDS_Edges in  nurbs_converted_shape_
-    auto shape_explorer = TopExp_Explorer(nurbs_converted_shape_, TopAbs_EDGE);
-    for (auto const &shape = shape_explorer.Current(); shape_explorer.More();
-         shape_explorer.Next(), edge_counter++) {
-        const auto extracted_edge = TopoDS::Edge(shape);
+    auto edge_explorer = TopExp_Explorer(nurbs_converted_shape_, TopAbs_EDGE);
+    for (auto const &edge = edge_explorer.Current(); edge_explorer.More();
+         edge_explorer.Next(), edge_counter++) {
+        const auto extracted_edge = TopoDS::Edge(edge);
 
-        const auto brep_adaptor_curve =
-            Teuchos::rcp(new BRepAdaptor_Curve(extracted_edge));
+        const auto brep_adaptor_curve = BRepAdaptor_Curve(extracted_edge);
 
-        auto extracted_bspline_curve = brep_adaptor_curve->BSpline();
+        auto extracted_bspline_curve = brep_adaptor_curve.BSpline();
 
         number_of_knots_ = extracted_bspline_curve->NbKnots();
 
-        auto knot_sequence = extracted_bspline_curve->Knots();
+        auto knot_sequence = TColStd_Array1OfReal(1, number_of_knots_);
+        extracted_bspline_curve->Knots(knot_sequence);
 
         length_ = knot_sequence.Length();
 
@@ -65,9 +65,11 @@ void tadiga::Geometry::initialize() {
         // Print  knot vector to integer array
         std::cout << "Edge #" << edge_counter << " Knot Sequence:";
 
-        for (tadiga::types::TadigaUnsignedInt i = 0; i < length_; ++i) {
-            std::cout << " " << knot_sequence.Value(i + 1);
-            knot_sequence_.push_back(knot_sequence.Value(i + 1));
+        knot_sequence_.clear();
+        OpencascadeArrayToVector(knot_sequence, knot_sequence_);
+
+        for (const auto &knot_value : knot_sequence_) {
+            std::cout << " " << knot_value;
         }
         std::cout << endl;
     }
@@ -76,41 +78,48 @@ void tadiga::Geometry::initialize() {
     tadiga::types::TadigaUnsignedInt face_counter = 1;
 
     // Reset explorer on face now
-    shape_explorer.Init(nurbs_converted_shape_, TopAbs_FACE);
+    auto face_explorer = TopExp_Explorer(nurbs_converted_shape_, TopAbs_FACE);
+    for (; face_explorer.More(); face_explorer.Next(), ++face_counter) {
+        const auto extracted_face = TopoDS::Face(face_explorer.Current());
 
-    for (auto const &shape = shape_explorer.Current(); shape_explorer.More();
-         shape_explorer.Next(), face_counter++) {
-        const auto extracted_face = TopoDS::Face(shape);
+        const auto brep_adaptor_surface = BRepAdaptor_Surface(extracted_face);
 
-        const auto brep_adaptor_surface =
-            Teuchos::rcp(new BRepAdaptor_Surface(extracted_face));
+        auto extracted_bspline_surface = brep_adaptor_surface.BSpline();
 
-        auto extracted_bspline_surface = brep_adaptor_surface->BSpline();
+        number_of_u_knots_ = extracted_bspline_surface->NbUKnots();
 
-        auto u_knot_sequence = extracted_bspline_surface->UKnotSequence();
+        auto u_knot_sequence = TColStd_Array1OfReal(1, number_of_u_knots_);
+        extracted_bspline_surface->UKnots(u_knot_sequence);
 
         u_length_ = u_knot_sequence.Length();
 
-        std::cout << "U Length: " << u_length_ << endl;
+        std::cout << "U Length: " << u_length_ << std::endl;
         std::cout << "Face #" << face_counter << " U Knot Sequence:";
 
-        for (tadiga::types::TadigaUnsignedInt i = 0; i < u_length_; ++i) {
-            std::cout << " " << u_knot_sequence.Value(i + 1);
-            u_knot_sequence_.push_back(u_knot_sequence.Value(i + 1));
-        }
-        std::cout << endl;
+        u_knot_sequence_.clear();
+        OpencascadeArrayToVector(u_knot_sequence, u_knot_sequence_);
 
-        auto v_knot_sequence = extracted_bspline_surface->VKnotSequence();
+        for (const auto &knot_value : u_knot_sequence_) {
+            std::cout << " " << knot_value;
+        }
+        std::cout << std::endl;
+
+        number_of_v_knots_ = extracted_bspline_surface->NbVKnots();
+
+        auto v_knot_sequence = TColStd_Array1OfReal(0, number_of_v_knots_);
+        extracted_bspline_surface->VKnots(v_knot_sequence);
 
         v_length_ = v_knot_sequence.Length();
 
         std::cout << "V Length: " << v_length_ << endl;
         std::cout << "Face #" << face_counter << " V Knot Sequence:";
 
-        for (tadiga::types::TadigaUnsignedInt i = 0; i < v_length_; ++i) {
-            std::cout << " " << v_knot_sequence.Value(i + 1);
-            v_knot_sequence_.push_back(v_knot_sequence.Value(i + 1));
+        v_knot_sequence_.clear();
+        OpencascadeArrayToVector(v_knot_sequence, v_knot_sequence_);
+
+        for (const auto &knot_value : v_knot_sequence_) {
+            std::cout << " " << knot_value;
         }
-        std::cout << endl;
+        std::cout << std::endl;
     }
 };

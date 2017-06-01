@@ -42,7 +42,7 @@ matrix:
                       - libyaml-cpp0.5 
                       - libyaml-cpp-dev 
           env: 
-              - MATRIX_EVAL="cmake -CMAKE_CXX_COMPILER=clang++-5.0 -DCMAKE_C_COMPILER=clang-5.0 -DCMAKE_BUILD_TYPE:STRING=Debug -DBUILD_Trilinos:BOOL=ON .."
+              - MATRIX_EVAL="cmake -CMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DCMAKE_BUILD_TYPE:STRING=Debug -DBUILD_Trilinos:BOOL=ON .."
         - os: osx
           env: 
               - MATRIX_EVAL="cmake -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ -DCMAKE_BUILD_TYPE:STRING=Debug -DBUILD_Trilinos:BOOL=ON .."

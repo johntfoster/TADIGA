@@ -17,11 +17,10 @@ project(oce-download NONE)
 
 include(ExternalProject)
 ExternalProject_Add(OCE
-    GIT_REPOSITORY https://github.com/xzcvczx/oce.git
-    GIT_TAG clock_gettime_fix 
+    GIT_REPOSITORY https://github.com/tpaviot/oce.git
     SOURCE_DIR "${CMAKE_BINARY_DIR}/oce-src"
     BINARY_DIR "${CMAKE_BINARY_DIR}/oce-build"
-    INSTALL_DIR "${CMAKE_BINARY_DIR}/oce-build"
+    INSTALL_DIR "${CMAKE_BINARY_DIR}/oce"
     CMAKE_ARGS -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
                -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
                -DOCE_BUILD_SHARED_LIB:BOOL=${CMAKE_BUILD_SHARED_LIBS}
