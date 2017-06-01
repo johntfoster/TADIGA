@@ -32,4 +32,4 @@ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/coveralls-cmake/cmake" ${CMAKE_
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules" ${CMAKE_MODULE_PATH})
 
 #Find or build Trilinos and TPLs as necessary
-include(cmake/Trilinos.cmake)
+include(cmake/OpenCASCADE.cmake)
