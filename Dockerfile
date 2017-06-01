@@ -31,13 +31,15 @@ RUN rm -rf cmake*
 #Build Tadiga
 WORKDIR /
 
-ADD cmake cmake 
-ADD CMakeLists.txt .
+RUN git clone https://github.com/johntfoster/TaDIgA.git
+WORKDIR /TaDIgA
+RUN git checkout trilinos
+RUN git checkout origin/master -- cmake/*
 
-RUN mkdir -p build
+RUN mkdir -p /TaDIgA/build
 
-WORKDIR build/
-RUN /opt/cmake-3.8.1-Linux-x86_64/bin/cmake ..; make -j8 && make install
+WORKDIR /TaDIgA/build/
+RUN /opt/cmake-3.8.1-Linux-x86_64/bin/cmake ..; make -j8
 
 WORKDIR /
 RUN rm -rf cmake CMakeLists.txt trilinos-src trilinos-build trilinos-download
