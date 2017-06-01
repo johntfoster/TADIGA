@@ -12,16 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 cmake_minimum_required(VERSION 2.8)
-project(tadiga LANGUAGES CXX)
-enable_testing()
-
-message(STATUS "the compiler string is: ${CMAKE_C_COMPILER_ID}")
+project(trilinos-build LANGUAGES CXX)
 
 #Options
-option(BUILD_Trilinos "Build Trilinos with requred TPLs at configure time." OFF)
-option(BUILD_OpenCASCADE "Build OpenCASCADE at configure time." OFF)
-option(BUILD_ALL_TPLs "Build all required TPLs at configure time." OFF)
-option(COVERAGE "Turn on code coverage reporting" OFF)
+option(BUILD_Trilinos "Build Trilinos with requred TPLs at configure time." ON)
 
 #If MPI is found, use the libraries
 find_package(MPI)
@@ -37,16 +31,5 @@ endif()
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/coveralls-cmake/cmake" ${CMAKE_MODULE_PATH})
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules" ${CMAKE_MODULE_PATH})
 
-#Find or build Trilinos and OpenCASCADE with TPLs as necessary
+#Find or build Trilinos and TPLs as necessary
 include(cmake/Trilinos.cmake)
-include(cmake/OpenCASCADE.cmake)
-
-
-#Turn on coveralls code coverage upload
-if(COVERAGE)
-  include(CodeCoverage)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -fprofile-arcs -ftest-coverage")
-  setup_target_for_coverage(coverage ctest coverage)
-endif()
-
-add_subdirectory(src)

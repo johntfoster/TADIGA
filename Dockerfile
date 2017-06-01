@@ -31,26 +31,13 @@ RUN rm -rf cmake*
 #Build Tadiga
 WORKDIR /
 
-ADD src src
 ADD cmake cmake 
 ADD CMakeLists.txt .
 
-RUN mkdir build
+RUN mkdir -p build
 
 WORKDIR build/
-RUN /opt/cmake-3.8.1-Linux-x86_64/bin/cmake \
-    -D CMAKE_BUILD_TYPE:STRING=Debug \
-    -D CMAKE_INSTALL_PREFIX:PATH=/usr/local/tadiga \
-    -D BUILD_Trilinos:BOOL=ON \
-    -D BUILD_OpenCASCADE:BOOL=ON \
-    -D COVERAGE:BOOL=ON \
-    ..; \
-    make -j8 && make install
+RUN /opt/cmake-3.8.1-Linux-x86_64/bin/cmake ..; make -j8 && make install
 
 WORKDIR /
-RUN rm -rf cmake CMakeLists.txt oce-download oce-build oce-src trilinos-src trilinos-build trilinos-download
-
-WORKDIR /output
-ENV PATH /usr/local/tadiga/bin:$PATH
-
-CMD    ["/usr/sbin/sshd", "-D"]
+RUN rm -rf cmake CMakeLists.txt trilinos-src trilinos-build trilinos-download
