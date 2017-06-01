@@ -37,7 +37,10 @@ find_path(OpenCASCADE_INCLUDE_DIRS Standard_Version.hxx
                 include/oce
                 include/occ
                 include/opencascade
-                opencascade oce occ)
+                opencascade oce occ
+                opencascade/include
+                oce/include
+                occ/include)
 
 if(OpenCASCADE_INCLUDE_DIRS STREQUAL Standard_Version.hxx-NOTFOUND)
     unset(OpenCASCADE_INCLUDE_DIRS)
