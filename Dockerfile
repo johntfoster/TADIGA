@@ -42,4 +42,4 @@ WORKDIR /TaDIgA/build/
 RUN /opt/cmake-3.8.1-Linux-x86_64/bin/cmake ..; make -j8
 
 WORKDIR /
-RUN rm -rf cmake CMakeLists.txt trilinos-src trilinos-build trilinos-download
+RUN rm -rf TaDIgA
